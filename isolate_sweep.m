@@ -1,18 +1,22 @@
 % This function isolates sweep data from a dataset
 % It accepts the following parameters:
 % sweep_time - number; duration of a single sweep
+% start_freq - the start range of the frequency
+% end_freq - the end value of the frequency range
 % cutoff - number; fraction of sweep to cut off of each end to remove noise bursts
 % or other unwanted end effects
 % dir - string; directory of files
 % file_type - string; file extension
-function isolate_sweep(sweep_time, cutoff, dir, file_type)
+% smooth_param - parameter used to smooth out noisy data
+function isolate_sweep(sweep_time, start_freq, end_freq, cutoff, loc, file_type,smooth_param)
 
-files = dir(strcat(dir, '.', file_type)); % Open data files
+files = dir(strcat(loc, '.', file_type)); % Open data files
 file_list = {files.name}';
 
 minleft = intmax;
 minright = intmax;
 times = {};
+frequency = {};
 voltages = {};
 idxs = {};
 for a = 1:length(file_list)
@@ -83,18 +87,27 @@ for a = 1:length(file_list)
     time = time(start_index:end_index,1);
     voltage = voltage(start_index:end_index,1);
     
-    % Make times start from 0s
-    time = time-time(1,1);
+    % Centre the peak around exactly half the the sweep time
+    time = time+(cutoff*sweep_time)*0.5-time(1,1);
+    range = (end_freq-start_freq)*(1-2*cutoff);
+    frequency = time/time(end,1)*range+start_freq;
+    
    
-    % voltage_smooth = smooth(time,voltage,0.005,'rloess');
+%     voltage_smooth = smooth(frequency,voltage,smooth_param,'rloess');
     title('Varying Trc at 50 kHz mod. freq.')
-    xlabel('time (s)')
+    xlabel('Frequency (kHz)')
     ylabel('Voltage (mV)')
     hold on;
-    plot(time,voltage);
-%     plot(time,voltage_smooth);
+    plot(frequency,voltage);
+%     plot(frequency,voltage_smooth);
 end
 hold off;
-end
 
+legend_strings = {};
+for a = 1:length(file_list)
+    legend_strings{end+1} = file_list{a};
+end
+legend(legend_strings{:});
+
+end
 
