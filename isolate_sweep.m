@@ -10,9 +10,6 @@ function isolate_sweep(sweep_time, cutoff, dir, file_type)
 files = dir(strcat(dir, '.', file_type)); % Open data files
 file_list = {files.name}';
 
-cutoff = 0.01; % Cut off 1% of the ends of the signal to remove noise bursts
-sweep_time = 4.0; % Duration of single sweep
-
 minleft = intmax;
 minright = intmax;
 times = {};
