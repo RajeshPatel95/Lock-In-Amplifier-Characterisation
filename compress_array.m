@@ -15,16 +15,16 @@ if(rem(size, box_size))
     arr=zeros(1,num_boxes+1);
     
     for i=1:num_boxes
-        arr(i) = sum(array((1+i*box_size-box_size):(i*box_size)))/box_size;
+        arr(i) = mean(array((1+i*box_size-box_size):(i*box_size)));
     end
-    arr(num_boxes+1) = sum(array(num_boxes*box_size+1:end))/length(array(num_boxes*box_size+1:end));
+    arr(num_boxes+1) = mean(array(num_boxes*box_size+1:end));
 
 % Length of array is evenly divisible by boxcar
 else
     arr=zeros(1,num_boxes);
     
     for i=1:num_boxes
-        arr(i) = sum(array((1+i*box_size-box_size):(i*box_size)))/box_size;
+        arr(i) = mean(array((1+i*box_size-box_size):(i*box_size)))
     end
 end
 end
